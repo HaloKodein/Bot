@@ -22,7 +22,7 @@ interface IContextCheckCommand {
 export class Validator {
     constructor(
         private commands: Map<String, ICommand>,
-        private aliases: Map<String, String>
+        private aliases?: Map<String, String>
     ) {}
 
     public async findCommand({ content }: Message): Promise<ICommand> {
