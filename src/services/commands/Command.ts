@@ -16,11 +16,11 @@ export default class CommandManager {
     private validator = new Validator(this.commands, this.aliases)
 
     public async handle(): Promise<any> {
-        readdir('./src/commands/', (err, files) => {
+        readdir('./src/commands/', (err, props) => {
             if (err) throw new TypeError(err.message)
-            files.forEach(async props => {
-                if (props.split('.').slice(-1)[0] !== 'ts') return
-                const { default: command } = await import(`../commands/${props}`)
+            for (var prop in props) {
+                if (prop.split('.').slice(-1)[0] !== 'ts') return
+                const { default: command } = await import(`../commands/${prop}`)
 
                 this.commands.set(command.config.name
                     .toLowerCase(), command)
@@ -33,7 +33,7 @@ export default class CommandManager {
                     })
 
                 console.log(`[LOADING] Command: ${command.config.name}`)
-            })
+            }
         })
     }
 
