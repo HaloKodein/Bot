@@ -48,10 +48,20 @@ export class Validator {
         const { isAdmin } = user.settings
         const getMember = (id: string) => context.guild.members.cache.get(id)
 
-        if (!getMember(context.member.user.id).permissions.has([ ...permissions ])
-            && !getMember(client.user.id).permissions.has([ ...permissions ])) return context.channel
-            .send({
-                content: `Falta as permissões ${permissions.map(e => e).join(', ')}`
-            })
+        if (command.config.maintenance)
+            throw new Error('O comando está em manutenção.')
+
+        if (command.config.disabled)
+            throw new Error('O comando está desativado.')
+
+        if (permissions[0] !== 'OWNER')
+            if (!getMember(context.member.user.id).permissions.has(permissions))
+                throw new Error(`Você precisa das permissões de ${permissions.map(e => e).join(', ')}`)
+
+            if (!getMember(client.user.id).permissions.has(permissions))
+                throw new Error(`Eu preciso das permissões de ${permissions.map(e => e).join(', ')}`)
+        else
+            if (!user.settings.isAdmin)
+                throw new Error(`Você não tem permissão para usar esse comando.`)
     }
 }
