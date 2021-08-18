@@ -46,7 +46,12 @@ export class Validator {
     public async checkCommand({ context, command, user }: IContextCheckCommand): Promise<void> {
         const { permissions } = command.config
         const { isAdmin } = user.settings
+        const getMember = (id: string) => context.guild.members.cache.get(id)
 
-        if (type context === 'Interaction') {}
+        if (!getMember(context.member.user.id).permissions.has([ ...permissions ])
+            && !getMember(client.user.id).permissions.has([ ...permissions ])) return context.channel
+            .send({
+                content: `Falta as permissões ${permissions.map(e => e).join(', ')}`
+            })
     }
 }
